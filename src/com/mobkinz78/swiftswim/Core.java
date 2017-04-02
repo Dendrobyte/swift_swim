@@ -31,6 +31,7 @@ public class Core extends JavaPlugin implements Listener {
         Core.instance = this;
         if(getConfig().getStringList("enabled-worlds").isEmpty()){
             getLogger().log(Level.WARNING, "[Swift Swim] There are no worlds in the configuration file!");
+            getLogger().log(Level.INFO, "[Swift Swim] Please note that the plugin may not work correctly if no worlds are put into the list.");
         }
         //§
     }
