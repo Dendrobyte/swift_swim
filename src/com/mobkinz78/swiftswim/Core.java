@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * Created by Mark on 3/27/2016.
@@ -28,6 +29,9 @@ public class Core extends JavaPlugin implements Listener {
         createConfig();
 
         Core.instance = this;
+        if(getConfig().getStringList("enabled-worlds").isEmpty()){
+            getLogger().log(Level.WARNING, "[Swift Swim] There are no worlds in the configuration file!");
+        }
         //§
     }
 
