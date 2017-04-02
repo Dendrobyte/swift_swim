@@ -3,6 +3,7 @@ package com.mobkinz78.swiftswim;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -10,6 +11,8 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.potion.PotionEffectType;
 import com.mobkinz78.swiftswim.Core;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,58 +23,70 @@ public class Events implements Listener {
 
     @EventHandler
     public void weatherChange(WeatherChangeEvent e) { // This throw is unchecked. There is an error that spams console???
-        if (e.getWorld().getName().equalsIgnoreCase("towny")) {
-            if (!e.toWeatherState()) { //Turns to clear
-                //System.out.println(prefix + "Weather changed to clear!");
-                for (Player name : Core.playerNames) { // Needs to be the rain event in towny!!! (This entire event, actually)
-                    Core.playerNames.remove(name); //remove players from arraylist
-                    Core.playerIds.remove(name.getUniqueId());
-                    name.sendMessage(Core.prefix + "§cSwift Swim has been §4§ldisabled, §cbecause the rain has stopped!");
+        List<String> worldNames = Core.getInstance().getConfig().getStringList("enabled-worlds");
+        if(!worldNames.contains(e.getWorld().getName())) return;
+        for(String world : worldNames) {
+            if (e.getWorld().getName().equalsIgnoreCase(world)) {
+                if (!e.toWeatherState()) { //Turns to clear
+                    for (Player name : Core.playerNames) {
+                        Core.playerNames.remove(name); //remove players from arraylist
+                        Core.playerIds.remove(name.getUniqueId());
+                        name.sendMessage(Core.prefix + "§cSwift Swim has been §4§ldisabled §cbecause the rain has stopped!");
 
-                    //Clear effects from each person
-                    PotionEffectType speed = PotionEffectType.SPEED;
-                    name.removePotionEffect(speed);
+                        //Clear effects from each person
+                        PotionEffectType speed = PotionEffectType.SPEED;
+                        name.removePotionEffect(speed);
 
-                    for (UUID id : Core.playerIds) {
-                        Core.playerIds.remove(id);
+                        for (UUID id : Core.playerIds) {
+                            Core.playerIds.remove(id);
+                        }
                     }
                 }
-            }
-            if (e.toWeatherState()) { //Turns to rain
-                // System.out.println("Weather changed to rain!");
-                // Broadcast players to world (worlds in config file? fun challenge!) that swift swim can be enabled
-                for (Player name : Bukkit.getServer().getOnlinePlayers()) {
-                    World world = name.getWorld();
-                    if (world.getName().equalsIgnoreCase("towny")) {
-                        name.sendMessage(Core.prefix + "§b§oIt is now raining in your world.");
-                        name.sendMessage(Core.prefix + "§9To enable swift swim, type §a§l/swiftswim enable.");
-                    } else {
-                        // Nothing required
+                if (e.toWeatherState()) { //Turns to rain
+                    for (Player name : Bukkit.getServer().getOnlinePlayers()) {
+                        World playersWorld = name.getWorld();
+                        for(String worldName : Core.getInstance().getConfig().getStringList("enabled-worlds")){
+                            if (playersWorld.getName().equalsIgnoreCase(worldName)) {
+                                name.sendMessage(Core.prefix + "§b§oIt is now raining in your world.");
+                                name.sendMessage(Core.prefix + "§9To enable swift swim, type §a§l/swiftswim enable.");
+                            }
+                        }
                     }
                 }
+            } else {
+                //System.out.println("The weather has been changed in a world not listed!");
             }
-        } else {
-            //System.out.println("The weather has been changed in a world not listed!");
+        }
+        if(!Core.getInstance().getConfig().getStringList("enabled-worlds").contains(e.getWorld().getName())){
+            // Do nothing
         }
     }
 
     @EventHandler
-    public void playerTeleportEvent(PlayerTeleportEvent e) {
+    public void playerTeleportEvent(PlayerTeleportEvent e) throws EventException {
         // System.out.println("Teleport event triggered by: " + e.getPlayer().getName());
 
         Player user = e.getPlayer();
 
         if (Core.playerIds.contains(e.getPlayer().getUniqueId())) {
-            user.sendMessage(Core.prefix + "§b§oSwift Swim has been cancelled because you teleported!");
-            user.sendMessage(Core.prefix + "§9If you are still in a world with swiftswim, you can re-enable it."); // List worlds in the arraylist if using config
+            if(e.getFrom().getWorld() == e.getTo().getWorld()){
+                return;
+            }
+            user.sendMessage(Core.prefix + "§b§oSwift Swim has been cancelled because you teleported to a different world!");
+            user.sendMessage(Core.prefix + "§9If it is raining in the world you are in, and swift swim is allowed, you can re-enable swift swim.");
             Core.playerNames.remove(e.getPlayer());
             Core.playerIds.remove(user.getUniqueId());
-            //user.sendMessage(prefix + user.getName() + " was successfully removed from arraylist");
             PotionEffectType speed = PotionEffectType.SPEED;
             user.removePotionEffect(speed);
 
-        } else {
-            //user.sendMessage("You were teleported, but not from within the arraylist!");
+        }
+        if(!Core.playerIds.contains(e.getPlayer().getUniqueId())){
+            if(e.getTo().getWorld().hasStorm()){
+                if(Core.getInstance().getConfig().getStringList("enabled-worlds").contains(e.getTo().getWorld().getName())){
+                    user.sendMessage(Core.prefix + "§9The world you have teleported to has swift swim enabled and it is raining!");
+                    user.sendMessage(Core.prefix + "§9Use /swiftswim enable to turn it on.");
+                }
+            }
         }
 
     }

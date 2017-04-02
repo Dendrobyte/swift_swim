@@ -1,16 +1,13 @@
 author: Mobkinz78
 main: com.mobkinz78.swiftswim.Core
 name: SwiftSwim
-version: 1.8
-description: "Give players speed when it is raining!"
+version: 2.0
+description: Give players speed when it is raining!
 commands: 
   swiftswim:
     description: Allows use of swiftswim
     aliases: [ss]
-  checklist:
-    description: prints out the lists
-    aliases: []
 permissions:
-  swiftswim.allowed: 
+  swiftswim.use:
     default: false
-    description: "Allowed to use swiftswim."
+    description: Allowed to use swiftswim.
