@@ -32,6 +32,7 @@ public class Commands implements CommandExecutor {
                         sender.sendMessage(Core.prefix + "§cNo argument given! Accepted arguments: ");
                         sender.sendMessage(Core.prefix + "§9Enable §r§lor §r§9disable");
                         return true;
+                        // hey
                     }
                     if (!enabledWorlds.contains(w.getName())) {
                         player.sendMessage(Core.prefix + "§cSorry, swift swim is not enabled in this world!");
