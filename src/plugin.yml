@@ -1,7 +1,7 @@
 author: Mobkinz78
 main: com.mobkinz78.swiftswim.Core
 name: SwiftSwim
-version: 2.0
+version: 3.0
 description: Give players speed when it is raining!
 commands: 
   swiftswim:
@@ -11,3 +11,6 @@ permissions:
   swiftswim.use:
     default: false
     description: Allowed to use swiftswim.
+  swiftswim.addworld:
+    default: false
+    description: Allows users and admins to add worlds to the list of enabled worlds.
