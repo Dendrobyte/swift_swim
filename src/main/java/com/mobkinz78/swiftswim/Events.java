@@ -28,18 +28,15 @@ public class Events implements Listener {
         for(String world : worldNames) {
             if (e.getWorld().getName().equalsIgnoreCase(world)) {
                 if (!e.toWeatherState()) { //Turns to clear
-                    for (Player name : Core.playerNames) {
-                        Core.playerNames.remove(name); //remove players from arraylist
-                        Core.playerIds.remove(name.getUniqueId());
-                        name.sendMessage(Core.prefix + "§cSwift Swim has been §4§ldisabled §cbecause the rain has stopped!");
+                    ArrayList<Player> tempList = Core.playerNames; // To avoid ConcurrentModificationExceptions
+                    for (Player player : tempList) {
+                        Core.playerNames.remove(player); //remove players from arraylist
+                        Core.playerIds.remove(player.getUniqueId());
+                        player.sendMessage(Core.prefix + "§cSwift Swim has been §4§ldisabled §cbecause the rain has stopped!");
 
                         //Clear effects from each person
                         PotionEffectType speed = PotionEffectType.SPEED;
-                        name.removePotionEffect(speed);
-
-                        for (UUID id : Core.playerIds) {
-                            Core.playerIds.remove(id);
-                        }
+                        player.removePotionEffect(speed);
                     }
                 }
                 if (e.toWeatherState()) { //Turns to rain
@@ -64,14 +61,15 @@ public class Events implements Listener {
 
     @EventHandler
     public void playerTeleportEvent(PlayerTeleportEvent e) throws EventException {
-        // System.out.println("Teleport event triggered by: " + e.getPlayer().getName());
-
         Player user = e.getPlayer();
+        String worldNameFrom = e.getFrom().getWorld().getName();
+        String worldNameTo = e.getTo().getWorld().getName();
+
+        if(worldNameFrom.equals(worldNameTo)){
+            return;
+        }
 
         if (Core.playerIds.contains(e.getPlayer().getUniqueId())) {
-            if(e.getFrom().getWorld() == e.getTo().getWorld()){
-                return;
-            }
             user.sendMessage(Core.prefix + "§b§oSwift Swim has been cancelled because you teleported to a different world!");
             user.sendMessage(Core.prefix + "§9If it is raining in the world you are in, and swift swim is allowed, you can re-enable swift swim.");
             Core.playerNames.remove(e.getPlayer());

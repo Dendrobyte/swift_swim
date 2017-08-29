@@ -17,16 +17,16 @@ import java.util.UUID;
 public class Commands implements CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("This command can only be executed by players!");
+            return true;
+        }
         Player player = (Player) sender;
         UUID senderUUID = ((Player) sender).getUniqueId();
         World w = player.getWorld();
         List<String> enabledWorlds = Core.getInstance().getConfig().getStringList("enabled-worlds");
 
             if(cmd.getName().equalsIgnoreCase("swiftswim")){
-                if (!(sender instanceof Player)) {
-                    sender.sendMessage("This command can only be executed by players!");
-                    return true;
-                }
                 if(player.hasPermission("swiftswim.use") || player.isOp()) {
                     if (args.length == 0) {
                         sender.sendMessage(Core.prefix + "§cNo argument given! Accepted arguments: ");
