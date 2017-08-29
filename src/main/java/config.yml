@@ -1,0 +1,5 @@
+#Swift Swim configuration
+
+#This is a list of worlds that swift swim can be enabled in
+enabled-worlds:
+- world
