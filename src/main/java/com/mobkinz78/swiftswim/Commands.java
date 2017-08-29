@@ -48,7 +48,7 @@ public class Commands implements CommandExecutor {
                         }
                         if (w.hasStorm()) {
                             if (args[0].equalsIgnoreCase("enable")) {
-                                sender.sendMessage(Core.prefix + "§9§lSwift Swim has been §a§lenabled");
+                                sender.sendMessage(Core.prefix + "§9Swift Swim has been §a§lenabled");
                                 sender.sendMessage(Core.prefix + "§r§9§oUse /swiftswim disable to disable while it is raining.");
                                 Core.playerIds.add(senderUUID);
                                 Core.playerNames.add(player);
@@ -60,7 +60,7 @@ public class Commands implements CommandExecutor {
                                 return true;
                             }
                             if (args[0].equalsIgnoreCase("disable")) {
-                                sender.sendMessage(Core.prefix + "§9§lSwift Swim has been §c§ldisabled.");
+                                sender.sendMessage(Core.prefix + "§9Swift Swim has been §c§ldisabled.");
                                 sender.sendMessage(Core.prefix + "§r§9§oUse /swiftswim enable to enable while it is raining.");
                                 Core.playerIds.remove(senderUUID);
                                 Core.playerNames.remove(sender.getName());
